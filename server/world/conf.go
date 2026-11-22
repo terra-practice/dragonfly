@@ -76,6 +76,20 @@ type Config struct {
 	// use NewBlockRegistry(), register blocks/states, and call Finalize().
 	Blocks BlockRegistry
 
+	// DisableLightCalculation skips the sky and block light calculation that is
+	// normally performed when a chunk is loaded or generated, and the light
+	// spreading to neighbouring chunks that follows it.
+	//
+	// Light calculation dominates the cost of loading a chunk: measured at
+	// roughly 3.3 ms of a 3.6 ms total per chunk. Worlds that are short-lived,
+	// fully lit, or never shown under changing light conditions — minigame
+	// arenas and practice rooms, where many copies of the same small world are
+	// created and destroyed — can skip it entirely.
+	//
+	// Chunks in a World with DisableLightCalculation set keep whatever light
+	// values their Provider supplied, which is zero for generated chunks.
+	DisableLightCalculation bool
+
 	// Synchronous removes the World's own background goroutines. Immediate tasks
 	// from World.Do and Call run on the calling goroutine, the World is not saved
 	// or unloaded automatically, and time only passes on explicit
